@@ -34,6 +34,9 @@ snmptrapからの標準入力の中で、ダブルクォート(")で囲まれた
 
 ## 当プログラムを、snmptrapdが稼働しているサーバ内に設置。
 
+* ここでは/usr/local/bin/.に設置
+* snmptrapd.confのPATHと合わせればどのPATHでも可能
+
 ```
 # cp -p conv_snmptrap_mb /usr/local/bin/.
 # chmod a+x /usr/local/bin/conv_snmptrap_mb
@@ -41,10 +44,8 @@ snmptrapからの標準入力の中で、ダブルクォート(")で囲まれた
 
 ## snmptrapd.conf の変更
 
-以下の例では、
-* 1.3.6.1.4.1.311.* = windows eventlogのトラップ(CP932の可能性)
-    CP932(UTF8以外)の場合、後続処理でiconvし、UTF8にする
-* 1.3.6.1.4.1.6876.* = windows eventlogのトラップ(UTF8の可能性)
+* snmptrapdコンフィグファイルのtraphandleで呼び出す
+* 通常、/usr/sbin/snmptthandlerを呼び出すだけがだが、前処理として以下のように配置
 
 ```
 disableAuthorization yes
@@ -53,3 +54,8 @@ traphandle 1.3.6.1.4.1.311.* /usr/local/bin/conv_snmptrap_mb | iconv -f cp932 | 
 traphandle 1.3.6.1.4.1.6876.* /usr/local/bin/conv_snmptrap_mb | /usr/sbin/snmptthandler
 traphandle default /usr/sbin/snmptthandler
 ```
+上記の例では、
+* 1.3.6.1.4.1.311.* = windows eventlogのトラップ(CP932の可能性)
+  * CP932(UTF8以外)の場合、後続処理でiconvし、UTF8にする
+* 1.3.6.1.4.1.6876.* = windows eventlogのトラップ(UTF8の可能性)
+* 上記以外のOIDは、今までどおり/usr/sbin/snmptthandlerを直接呼び出す
