@@ -1,0 +1,45 @@
+#!/usr/bin/perl
+use strict;
+use utf8;
+
+my $output         = '';
+my @words          = '';
+my $oid            = '';
+my $str            = '';
+my $multiline_flag = 0;
+
+while ( chomp( $_ = <> )) {
+    if ( $_ =~ /"/ || $multiline_flag == 1 ) {
+        if ( $multiline_flag == 1 ) {
+            @words = split( /(")/, $_ );
+            $str = $str . shift(@words);
+            if ( shift(@words) =~ /"/ ) {
+                $multiline_flag = 0;
+                if ( $str =~ /([0-9A-F][0-9A-F] )+/i ) {
+                    $str =~ s/(..) /chr(hex($1))/ge;
+                }
+                $output .= $oid . ' "' . $str . '"' . "\n";
+            }
+        }
+        else {
+            @words = split( /(")/, $_ );
+            $oid = shift(@words);
+            shift(@words);
+            $str = shift(@words);
+	    if ( shift(@words) =~ /"/ ) {
+                if ( $str =~ /([0-9A-F][0-9A-F] )+/i ) {
+                    $str =~ s/(..) /chr(hex($1))/ge;
+                }
+                $output .= $oid . ' "' . $str . '"' . "\n";
+                $multiline_flag = 0;
+            }
+            else {
+                $multiline_flag = 1;
+            }
+        }
+    }
+    else {
+        $output .= $_ . "\n";
+    }
+}
+print $output;
