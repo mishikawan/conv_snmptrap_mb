@@ -57,5 +57,5 @@ traphandle default /usr/sbin/snmptthandler
 上記の例では、
 * 1.3.6.1.4.1.311.* = windows eventlogのトラップ(CP932の可能性)
   * CP932(UTF8以外)の場合、後続処理でiconvし、UTF8にする
-* 1.3.6.1.4.1.6876.* = windows eventlogのトラップ(UTF8の可能性)
+* 1.3.6.1.4.1.6876.* = vCenter eventlogのトラップ(UTF8の可能性)
 * 上記以外のOIDは、今までどおり/usr/sbin/snmptthandlerを直接呼び出す
